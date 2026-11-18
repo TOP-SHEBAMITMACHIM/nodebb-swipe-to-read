@@ -1,0 +1,9 @@
+{
+	"title": "Swipe to Read – Wischen zum Lesen",
+	"threshold": "Wischweite (Prozent der Zeilenbreite)",
+	"scope": "Wo Wischen funktioniert",
+	"scope-unread": "Nur auf der Seite „Ungelesen“ (/unread)",
+	"scope-all": "In allen Themenlisten – bei ungelesenen Themen",
+	"save": "Einstellungen speichern",
+	"saved": "Einstellungen gespeichert. Benutzer erhalten sie beim nächsten Laden der Seite."
+}

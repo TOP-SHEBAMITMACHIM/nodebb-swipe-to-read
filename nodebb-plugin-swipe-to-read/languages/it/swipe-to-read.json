@@ -1,0 +1,9 @@
+{
+	"title": "Swipe to Read – scorri per segnare come letto",
+	"threshold": "Distanza di scorrimento (percentuale della larghezza della riga)",
+	"scope": "Dove funziona lo scorrimento",
+	"scope-unread": "Solo nella pagina «Non letti» (/unread)",
+	"scope-all": "In tutti gli elenchi di discussioni – sulle discussioni non lette",
+	"save": "Salva impostazioni",
+	"saved": "Impostazioni salvate. Gli utenti le riceveranno al prossimo caricamento della pagina."
+}

@@ -1,0 +1,9 @@
+{
+	"title": "Swipe to Read – veeg om te lezen",
+	"threshold": "Veegafstand (procent van de rijbreedte)",
+	"scope": "Waar vegen werkt",
+	"scope-unread": "Alleen op de pagina \"Ongelezen\" (/unread)",
+	"scope-all": "In alle onderwerplijsten – bij ongelezen onderwerpen",
+	"save": "Instellingen opslaan",
+	"saved": "Instellingen opgeslagen. Gebruikers krijgen ze bij de volgende paginalading."
+}

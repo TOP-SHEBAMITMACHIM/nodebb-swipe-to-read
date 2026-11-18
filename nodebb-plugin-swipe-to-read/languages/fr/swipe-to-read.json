@@ -1,0 +1,9 @@
+{
+	"title": "Swipe to Read – glisser pour marquer comme lu",
+	"threshold": "Distance de glissement (pourcentage de la largeur de la ligne)",
+	"scope": "Où le glissement fonctionne",
+	"scope-unread": "Uniquement sur la page « Non lus » (/unread)",
+	"scope-all": "Dans toutes les listes de sujets – sur les sujets non lus",
+	"save": "Enregistrer",
+	"saved": "Paramètres enregistrés. Les utilisateurs les recevront au prochain chargement de page."
+}

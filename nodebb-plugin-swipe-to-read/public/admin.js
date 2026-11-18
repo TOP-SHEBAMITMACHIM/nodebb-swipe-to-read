@@ -9,7 +9,7 @@ define('admin/plugins/swipe-to-read', ['settings', 'alerts'], function (Settings
 
 		$('#save').on('click', function () {
 			Settings.save('swipe-to-read', form, function () {
-				alerts.success('ההגדרות נשמרו. המשתמשים יקבלו אותן בטעינת העמוד הבאה.');
+				alerts.success('[[swipe-to-read:saved]]');
 			});
 		});
 	};

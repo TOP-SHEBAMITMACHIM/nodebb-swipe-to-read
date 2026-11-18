@@ -1,0 +1,9 @@
+{
+	"title": "Swipe to Read – desliza para marcar como leído",
+	"threshold": "Distancia de deslizamiento (porcentaje del ancho de la fila)",
+	"scope": "Dónde funciona el deslizamiento",
+	"scope-unread": "Solo en la página «No leídos» (/unread)",
+	"scope-all": "En todas las listas de temas – en temas no leídos",
+	"save": "Guardar ajustes",
+	"saved": "Ajustes guardados. Los usuarios los recibirán en la próxima carga de página."
+}

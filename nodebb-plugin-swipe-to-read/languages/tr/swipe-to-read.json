@@ -1,0 +1,9 @@
+{
+	"title": "Swipe to Read – okundu için kaydır",
+	"threshold": "Kaydırma mesafesi (satır genişliğinin yüzdesi)",
+	"scope": "Kaydırma nerede çalışır",
+	"scope-unread": "Yalnızca \"Okunmamış\" sayfasında (/unread)",
+	"scope-all": "Tüm konu listelerinde – okunmamış konularda",
+	"save": "Ayarları kaydet",
+	"saved": "Ayarlar kaydedildi. Kullanıcılar bir sonraki sayfa yüklemesinde alacak."
+}

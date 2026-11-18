@@ -1,0 +1,9 @@
+{
+	"title": "Swipe to Read – przesuń, aby oznaczyć jako przeczytane",
+	"threshold": "Długość przesunięcia (procent szerokości wiersza)",
+	"scope": "Gdzie działa przesuwanie",
+	"scope-unread": "Tylko na stronie „Nieprzeczytane” (/unread)",
+	"scope-all": "Na wszystkich listach tematów – przy nieprzeczytanych tematach",
+	"save": "Zapisz ustawienia",
+	"saved": "Ustawienia zapisane. Użytkownicy otrzymają je przy następnym wczytaniu strony."
+}

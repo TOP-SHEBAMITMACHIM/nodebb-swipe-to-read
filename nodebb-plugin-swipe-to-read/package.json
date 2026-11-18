@@ -1,6 +1,6 @@
 {
   "name": "nodebb-plugin-swipe-to-read",
-  "version": "1.0.0",
+  "version": "1.2.0",
   "description": "Swipe an unread topic sideways to mark it as read (NodeBB)",
   "main": "library.js",
   "keywords": [

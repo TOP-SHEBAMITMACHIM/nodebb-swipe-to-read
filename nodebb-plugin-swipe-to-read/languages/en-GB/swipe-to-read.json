@@ -1,0 +1,9 @@
+{
+	"title": "Swipe to Read",
+	"threshold": "How far to swipe (percent of the row width)",
+	"scope": "Where swiping works",
+	"scope-unread": "Only on the \"Unread\" page (/unread)",
+	"scope-all": "In every topic list – on unread topics",
+	"save": "Save settings",
+	"saved": "Settings saved. Users will get them on their next page load."
+}

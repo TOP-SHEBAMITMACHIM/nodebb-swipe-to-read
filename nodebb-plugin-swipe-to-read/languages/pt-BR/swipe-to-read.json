@@ -1,0 +1,9 @@
+{
+	"title": "Swipe to Read – deslize para marcar como lido",
+	"threshold": "Distância do deslize (porcentagem da largura da linha)",
+	"scope": "Onde o deslize funciona",
+	"scope-unread": "Somente na página \"Não lidos\" (/unread)",
+	"scope-all": "Em todas as listas de tópicos – em tópicos não lidos",
+	"save": "Salvar configurações",
+	"saved": "Configurações salvas. Os usuários as receberão no próximo carregamento da página."
+}

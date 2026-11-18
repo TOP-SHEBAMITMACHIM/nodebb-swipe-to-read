@@ -1,0 +1,9 @@
+{
+	"title": "Swipe to Read – 滑动标记已读",
+	"threshold": "滑动距离（行宽的百分比）",
+	"scope": "在哪里启用滑动",
+	"scope-unread": "仅在“未读”页面 (/unread)",
+	"scope-all": "在所有主题列表中 – 针对未读主题",
+	"save": "保存设置",
+	"saved": "设置已保存。用户将在下次加载页面时生效。"
+}

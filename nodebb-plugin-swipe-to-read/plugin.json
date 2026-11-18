@@ -1,7 +1,7 @@
 {
   "id": "nodebb-plugin-swipe-to-read",
   "name": "Swipe to Read",
-  "description": "החלקת נושא לא-נקרא הצידה מסמנת אותו כנקרא",
+  "description": "Swipe an unread topic sideways to mark it as read",
   "url": "",
   "library": "./library.js",
   "hooks": [
@@ -16,5 +16,7 @@
   "modules": {
     "../admin/plugins/swipe-to-read.js": "./public/admin.js"
   },
-  "templates": "templates"
+  "templates": "templates",
+  "languages": "languages",
+  "defaultLang": "en-GB"
 }

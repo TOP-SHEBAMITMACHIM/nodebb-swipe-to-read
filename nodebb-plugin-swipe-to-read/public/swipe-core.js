@@ -11,20 +11,65 @@
 	}
 
 	const ROW_SEL = '[component="category/topic"]';
-	const IGNORE_SEL = 'input, button, select, textarea, label, [component="topic/select"], .dropdown-menu, [data-bs-toggle]';
+	const EDGE_GUARD = 24; // px מקצה המסך שבהם לא מתחילים גרירה במגע
+	const IGNORE_SEL ='input, button, select, textarea, label, [component="topic/select"], .dropdown-menu, [data-bs-toggle]';
 
 	const DEFAULTS = {
 		threshold: 0.35, // חלק מרוחב השורה שצריך לגרור כדי לסמן
 		scope: 'unread', // 'unread' = רק בעמוד "לא נקראו", 'all' = כל נושא לא-נקרא בכל רשימה
 		alertTimeout: 3000, // כמה זמן (מ"ש) מוצגת ההתראה "הנושא סומן כנקרא"
-		labels: {
-			action: 'סמן כנקרא',
-			done: 'הנושא סומן כנקרא',
-			error: 'לא ניתן לסמן את הנושא כנקרא',
-			successTitle: 'הצלחה', // משמש רק אם מודול ההתראות של NodeBB לא זמין
-			errorTitle: 'שגיאה',
-		},
+		lang: '', // ריק = לפי שפת המשתמש בפורום
 	};
+
+	/* ---------- תרגומים ---------- */
+	// [action, done, error, successTitle, errorTitle]
+	// successTitle/errorTitle משמשים רק אם מודול ההתראות של NodeBB לא זמין (אחרת NodeBB מתרגם בעצמו).
+	const STRINGS = {
+		en: ['Mark as read', 'Topic marked as read', 'Could not mark the topic as read', 'Success', 'Error'],
+		he: ['סמן כנקרא', 'הנושא סומן כנקרא', 'לא ניתן לסמן את הנושא כנקרא', 'הצלחה', 'שגיאה'],
+		ar: ['تحديد كمقروء', 'تم تحديد الموضوع كمقروء', 'تعذّر تحديد الموضوع كمقروء', 'نجاح', 'خطأ'],
+		fa: ['علامت‌گذاری به‌عنوان خوانده‌شده', 'موضوع خوانده‌شده علامت خورد', 'علامت‌گذاری موضوع ممکن نشد', 'موفق', 'خطا'],
+		ru: ['Отметить как прочитанное', 'Тема отмечена как прочитанная', 'Не удалось отметить тему как прочитанную', 'Успешно', 'Ошибка'],
+		uk: ['Позначити як прочитане', 'Тему позначено як прочитану', 'Не вдалося позначити тему як прочитану', 'Успіх', 'Помилка'],
+		fr: ['Marquer comme lu', 'Sujet marqué comme lu', 'Impossible de marquer le sujet comme lu', 'Succès', 'Erreur'],
+		de: ['Als gelesen markieren', 'Thema als gelesen markiert', 'Thema konnte nicht als gelesen markiert werden', 'Erfolg', 'Fehler'],
+		es: ['Marcar como leído', 'Tema marcado como leído', 'No se pudo marcar el tema como leído', 'Éxito', 'Error'],
+		it: ['Segna come letto', 'Discussione segnata come letta', 'Impossibile segnare la discussione come letta', 'Successo', 'Errore'],
+		pt: ['Marcar como lido', 'Tópico marcado como lido', 'Não foi possível marcar o tópico como lido', 'Sucesso', 'Erro'],
+		nl: ['Markeren als gelezen', 'Onderwerp gemarkeerd als gelezen', 'Kon het onderwerp niet als gelezen markeren', 'Gelukt', 'Fout'],
+		pl: ['Oznacz jako przeczytane', 'Temat oznaczony jako przeczytany', 'Nie udało się oznaczyć tematu jako przeczytanego', 'Sukces', 'Błąd'],
+		tr: ['Okundu olarak işaretle', 'Konu okundu olarak işaretlendi', 'Konu okundu olarak işaretlenemedi', 'Başarılı', 'Hata'],
+		ja: ['既読にする', 'トピックを既読にしました', 'トピックを既読にできませんでした', '成功', 'エラー'],
+		ko: ['읽음으로 표시', '주제를 읽음으로 표시했습니다', '주제를 읽음으로 표시할 수 없습니다', '성공', '오류'],
+		'zh-CN': ['标记为已读', '主题已标记为已读', '无法将主题标记为已读', '成功', '错误'],
+		'zh-TW': ['標記為已讀', '主題已標記為已讀', '無法將主題標記為已讀', '成功', '錯誤'],
+	};
+	const LABEL_KEYS = ['action', 'done', 'error', 'successTitle', 'errorTitle'];
+
+	// "en-GB" → en, "pt-BR" → pt, "zh-CN" נשאר zh-CN. שפה לא מוכרת → אנגלית.
+	function resolveLang(code) {
+		code = String(code || '').replace('_', '-');
+		if (STRINGS[code]) {
+			return code;
+		}
+		const base = code.split('-')[0].toLowerCase();
+		if (base === 'zh') {
+			return /tw|hk|hant/i.test(code) ? 'zh-TW' : 'zh-CN';
+		}
+		return STRINGS[base] ? base : 'en';
+	}
+
+	function getLabels(lang) {
+		const arr = STRINGS[resolveLang(lang)];
+		const out = {};
+		LABEL_KEYS.forEach((k, i) => { out[k] = arr[i]; });
+		return out;
+	}
+
+	function detectLang() {
+		const cfg = root.config || {};
+		return cfg.userLang || cfg.defaultLang || document.documentElement.lang || navigator.language || 'en';
+	}
 
 	let options = null;
 	let api = null;
@@ -95,6 +140,7 @@ ${touchSel} { touch-action: pan-y; }
 	background: var(--bs-body-bg, #fff); border-radius: var(--bs-border-radius-lg, .5rem);
 	box-shadow: var(--bs-box-shadow, 0 .5rem 1rem rgba(0,0,0,.15)), 0 0 0 1px var(--bs-border-color, #e9ecef); }
 .str-anim { transition: transform .26s cubic-bezier(.2,.8,.2,1), opacity .26s ease, box-shadow .26s ease; }
+.str-spring { transition: transform .38s cubic-bezier(.34,1.45,.64,1), box-shadow .26s ease; }
 .str-bg { position: absolute; z-index: 1; display: flex; align-items: center; gap: .625rem; padding: 0 1.25rem;
 	box-sizing: border-box; direction: ltr; overflow: hidden; white-space: nowrap; pointer-events: none; opacity: 0;
 	background: var(--bs-success-bg-subtle, #d1e7dd); color: var(--bs-success-text-emphasis, #0a3622);
@@ -107,12 +153,12 @@ ${touchSel} { touch-action: pan-y; }
 	background: var(--bs-body-bg, #fff); color: var(--bs-success, #198754);
 	transform: scale(calc(.6 + .4 * var(--str-p, 0)));
 	transition: transform .2s cubic-bezier(.3,1.6,.5,1), background-color .2s ease, color .2s ease; }
-.str-bg .str-label { direction: rtl; unicode-bidi: isolate; opacity: var(--str-p, 0); }
+.str-bg .str-label { unicode-bidi: isolate; opacity: var(--str-p, 0); }
 .str-bg.str-ready { background: var(--bs-success, #198754); color: #fff; }
 .str-bg.str-ready .str-icon { transform: scale(1.12); }
 .str-collapse { overflow: hidden !important; transition: height .24s ease, padding .24s ease, margin .24s ease, opacity .24s ease !important; }
 @media (prefers-reduced-motion: reduce) {
-	.str-anim, .str-collapse, .str-bg, .str-bg .str-icon { transition: none !important; }
+	.str-anim, .str-spring, .str-collapse, .str-bg, .str-bg .str-icon { transition: none !important; }
 }
 `;
 		const style = document.createElement('style');
@@ -275,7 +321,9 @@ ${touchSel} { touch-action: pan-y; }
 		bg.style.width = row.offsetWidth + 'px';
 		bg.style.height = row.offsetHeight + 'px';
 		bg.innerHTML = '<span class="str-icon"><i class="fa fa-fw fa-check"></i></span><span class="str-label"></span>';
-		bg.querySelector('.str-label').textContent = options.labels.action;
+		const label = bg.querySelector('.str-label');
+		label.textContent = options.labels.action;
+		label.dir = 'auto'; // עברית/ערבית מימין לשמאל, שאר השפות משמאל לימין
 		parent.insertBefore(bg, row);
 		st.bg = bg;
 	}
@@ -305,23 +353,26 @@ ${touchSel} { touch-action: pan-y; }
 			parent.style.position = s.parentPos || '';
 			parent.style.overflowX = s.parentOverflow || '';
 		}
-		s.row.classList.remove('str-dragging', 'str-anim');
+		s.row.classList.remove('str-dragging', 'str-anim', 'str-spring');
 	}
 
 	function resetRow(row) {
-		['transform', 'opacity', 'height', 'paddingTop', 'paddingBottom', 'marginTop', 'marginBottom', 'transition'].forEach((p) => {
+		['transform', 'opacity', 'height', 'paddingTop', 'paddingBottom', 'marginTop', 'marginBottom', 'transition', 'transitionDuration'].forEach((p) => {
 			row.style[p] = '';
 		});
-		row.classList.remove('str-dragging', 'str-anim', 'str-collapse', 'str-busy');
+		row.classList.remove('str-dragging', 'str-anim', 'str-spring', 'str-collapse', 'str-busy');
 	}
 
 	async function snapBack(s) {
-		s.row.classList.add('str-anim');
+		// חזרה עם קפיצה קטנה, כמו גומייה
+		s.row.classList.add('str-spring');
 		s.row.style.transform = '';
 		if (s.bg) {
+			s.bg.classList.remove('str-ready');
+			s.bg.style.transition = 'opacity .2s ease';
 			s.bg.style.opacity = '0';
 		}
-		await wait(230);
+		await wait(380);
 		cleanup(s);
 		resetRow(s.row);
 	}
@@ -341,11 +392,18 @@ ${touchSel} { touch-action: pan-y; }
 			return false;
 		});
 
+		// השורה ממשיכה לצאת במהירות של האצבע: הנפה מהירה = יציאה מהירה
+		const remaining = Math.max(0, s.width - Math.abs(s.dx));
+		const speed = Math.max(Math.abs(s.v), 1.2); // px/ms
+		const dur = Math.round(Math.min(240, Math.max(110, remaining / speed)));
 		row.classList.add('str-busy', 'str-anim');
+		row.style.transitionDuration = dur + 'ms';
 		row.style.transform = 'translateX(' + (dir * s.width) + 'px)';
 		row.style.opacity = '0';
 		s.bg.style.opacity = '1';
-		await wait(230);
+		s.bg.classList.add('str-ready');
+		await wait(dur);
+		row.style.transitionDuration = '';
 
 		// כיווץ הגובה כדי שהשורות הבאות יעלו בצורה חלקה
 		cleanup(s);
@@ -389,6 +447,10 @@ ${touchSel} { touch-action: pan-y; }
 		if (!row || row.classList.contains('str-busy') || e.target.closest(IGNORE_SEL) || !isEligible(row)) {
 			return;
 		}
+		// באנדרואיד החלקה מקצה המסך היא מחוות "חזור" של המערכת – לא מתחילים שם גרירה
+		if (e.pointerType !== 'mouse' && (e.clientX < EDGE_GUARD || e.clientX > root.innerWidth - EDGE_GUARD)) {
+			return;
+		}
 		const now = performance.now();
 		st = { row: row, id: e.pointerId, x0: e.clientX, y0: e.clientY, dx: 0, lastX: e.clientX, lastT: now, v: 0, dragging: false };
 	}
@@ -414,7 +476,9 @@ ${touchSel} { touch-action: pan-y; }
 		const now = performance.now();
 		const dt = now - st.lastT;
 		if (dt > 0) {
-			st.v = (e.clientX - st.lastX) / dt;
+			// מהירות מוחלקת – פחות רגישה לקפיצות בין אירועי מגע בודדים
+			const inst = (e.clientX - st.lastX) / dt;
+			st.v = st.v ? 0.6 * inst + 0.4 * st.v : inst;
 		}
 		st.lastX = e.clientX;
 		st.lastT = now;
@@ -432,10 +496,17 @@ ${touchSel} { touch-action: pan-y; }
 			return;
 		}
 		suppressNextClick();
+		// אם האצבע עצרה לפני ששוחררה – אין "הנפה"
+		if (performance.now() - s.lastT > 90) {
+			s.v = 0;
+		}
 		const abs = Math.abs(s.dx);
+		const sameDir = Math.sign(s.v) === Math.sign(s.dx);
 		// "הנפה" מהירה מספיקה גם בלי להגיע לסף, אבל רק אחרי מרחק מינימלי
-		const flick = Math.abs(s.v) > 0.8 && abs > Math.max(80, s.width * 0.2) && Math.sign(s.v) === Math.sign(s.dx);
-		if (abs >= s.width * options.threshold || flick) {
+		const flick = Math.abs(s.v) > 0.8 && abs > Math.max(80, s.width * 0.2) && sameDir;
+		// התחרטות: עבר את הסף אבל משך חזרה במהירות לפני ששחרר
+		const changedMind = !sameDir && Math.abs(s.v) > 0.4;
+		if ((abs >= s.width * options.threshold && !changedMind) || flick) {
 			dismiss(s);
 		} else {
 			snapBack(s);
@@ -461,7 +532,7 @@ ${touchSel} { touch-action: pan-y; }
 		}
 		userOptions = userOptions || {};
 		options = Object.assign({}, DEFAULTS, userOptions);
-		options.labels = Object.assign({}, DEFAULTS.labels, userOptions.labels || {});
+		options.labels = Object.assign(getLabels(options.lang || detectLang()), userOptions.labels || {});
 		options.threshold = Math.min(0.9, Math.max(0.1, Number(options.threshold) || DEFAULTS.threshold));
 		api = Object.assign({}, defaultApi, userOptions.api || {});
 
@@ -471,6 +542,8 @@ ${touchSel} { touch-action: pan-y; }
 		document.addEventListener('pointerup', onUp);
 		document.addEventListener('pointercancel', onCancel);
 		document.addEventListener('dragstart', (e) => { if (st) { e.preventDefault(); } });
+		// בזמן גרירה אופקית נועלים גלילה אנכית, כדי שהדפדפן בנייד לא "יחטוף" את המחווה באמצע
+		document.addEventListener('touchmove', (e) => { if (st && st.dragging && e.cancelable) { e.preventDefault(); } }, { passive: false });
 		loadAlerts();
 		if (root.jQuery) {
 			root.jQuery(root).on('action:ajaxify.start', () => closeToast());
@@ -478,5 +551,5 @@ ${touchSel} { touch-action: pan-y; }
 		return root.SwipeToRead;
 	}
 
-	root.SwipeToRead = { init: init, version: '1.0.0' };
+	root.SwipeToRead = { init: init, version: '1.2.0', languages: Object.keys(STRINGS), getLabels: getLabels };
 }(typeof window !== 'undefined' ? window : this));
