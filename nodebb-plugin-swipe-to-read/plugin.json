@@ -1,0 +1,20 @@
+{
+  "id": "nodebb-plugin-swipe-to-read",
+  "name": "Swipe to Read",
+  "description": "החלקת נושא לא-נקרא הצידה מסמנת אותו כנקרא",
+  "url": "",
+  "library": "./library.js",
+  "hooks": [
+    { "hook": "static:app.load", "method": "init" },
+    { "hook": "filter:admin.header.build", "method": "addAdminNavigation" },
+    { "hook": "filter:config.get", "method": "getConfig" }
+  ],
+  "scripts": [
+    "public/swipe-core.js",
+    "public/client.js"
+  ],
+  "modules": {
+    "../admin/plugins/swipe-to-read.js": "./public/admin.js"
+  },
+  "templates": "templates"
+}
